@@ -1,0 +1,487 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Packaging as an Experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500&family=Inter:wght@400;500&display=swap">
+<style>
+/* Minimal product-design portfolio: near-white paper, one sans family, hairline rules instead of boxes, images on a quiet warm-grey stage */
+:root{
+  --paper:#fbfaf8; --panel:#fbfaf8; --ink:#141414; --muted:#6b6b6b; --faint:#9a9a9a; --line:#e3e1dc; --stage:#eae5df; --white:#ffffff;
+  --display:"Inter Tight","Helvetica Neue",Arial,sans-serif; --body:"Inter","Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --paper:#121212; --panel:#121212; --ink:#ededeb; --muted:#a3a3a0; --faint:#77777a; --line:#2c2c2c; color-scheme:dark } }
+:root[data-theme="dark"]{ --paper:#121212; --panel:#121212; --ink:#ededeb; --muted:#a3a3a0; --faint:#77777a; --line:#2c2c2c; color-scheme:dark }
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+h1,h2,h3{font-family:var(--display);font-weight:500;letter-spacing:-.02em}
+.label,.tier,.pill,.eyebrow,.split-label,.stage .count{font-family:var(--body);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* header */
+.bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:none;margin:0;padding:14px 48px;display:flex;align-items:center;gap:12px 32px;flex-wrap:wrap}
+.who{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-.01em;margin-right:auto;background:none;border:0;padding:0;cursor:pointer}
+.who span{color:var(--faint);font-weight:400}
+.nav{position:relative;display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.nav::-webkit-scrollbar{display:none}
+.nav button{border:0;background:none;padding:4px 0;font-size:13px;font-weight:400;color:var(--muted);cursor:pointer;white-space:nowrap;display:flex;gap:6px;border-bottom:1px solid transparent}
+.nav button:hover{color:var(--ink)}
+.nav button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.nav i{font-style:normal;font-variant-numeric:tabular-nums;color:var(--faint)}
+.wrap{max-width:1200px;margin:0 auto;padding:56px 24px 72px}
+.wrap.wide{max-width:none;margin:0;padding:56px 48px 72px}
+
+/* overview */
+.hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px 48px;align-items:end;padding-bottom:40px;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(38px,6vw,76px);line-height:.98;letter-spacing:-.04em;margin:14px 0 0;text-wrap:balance}
+.hero p{margin:0 0 .5em;color:var(--muted);max-width:none;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:56px 32px;margin-top:44px}
+@media (min-width:861px){.grid{grid-template-columns:repeat(6,minmax(0,1fr))}.grid>.card{grid-column:span 2}.grid>.card:nth-last-child(2):nth-child(3n+1){grid-column:2/4}.grid>.card:last-child:nth-child(3n+2){grid-column:4/6}}
+.card{background:none;border:0;padding:0;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card .thumb{aspect-ratio:1;background:var(--stage);overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.card .thumb img{width:100%;height:100%;object-fit:cover;background:var(--white);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.card:hover .thumb img{transform:scale(1.025)}
+.card .ph{font-family:var(--display);font-weight:400;font-size:56px;color:var(--faint)}
+.tier{display:flex;gap:10px}
+.tier b{display:none}
+.card h2{font-size:22px;line-height:1.15;margin:0}
+.card p{margin:0;color:var(--muted);font-size:14px;max-width:42ch}
+.split-label{grid-column:1/-1;margin:0 0 -24px;padding-top:4px;display:flex;justify-content:space-between}
+.split-label + .card, .split-label ~ .card{}
+.grid .split-label:not(:first-child){margin-top:24px;padding-top:28px;border-top:1px solid var(--line)}
+
+/* concept header */
+.chead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 40px;margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.chead h1{font-size:clamp(34px,5vw,60px);line-height:1;letter-spacing:-.035em;margin:12px 0 12px;text-wrap:balance}
+.chead p{margin:0;max-width:56ch;color:var(--muted);font-size:16px}
+.pill{display:inline-block;background:none;padding:0}
+.clogo{display:block;height:34px;width:auto;max-width:100%;margin:0 0 4px}
+.tabs{display:flex;gap:24px}
+.tabs button{border:0;background:none;padding:6px 0;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:1px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* walkthrough player */
+.player{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;align-items:stretch}
+.stage{position:relative;background:var(--stage);overflow:hidden;aspect-ratio:1;max-width:100%}
+.stage canvas{width:100%;height:100%;display:block}
+.stage .count{position:absolute;left:16px;top:14px;color:#6b665e}
+.stage .load{position:absolute;right:16px;bottom:14px;font-size:12px;color:#6b665e}
+.talk{display:flex;flex-direction:column;gap:20px;min-width:0}
+.steps{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:16px 0;cursor:pointer}
+.step .n{font-family:var(--body);font-size:12px;font-variant-numeric:tabular-nums;color:var(--faint);padding-top:5px}
+.step h3{margin:0;font-size:19px;font-weight:500;color:var(--muted);transition:color .2s}
+.step p{margin:8px 0 0;color:var(--muted);font-size:14.5px;display:none;max-width:52ch}
+.step:hover h3{color:var(--ink)}
+.step[aria-current="true"] h3{color:var(--ink)}
+.step[aria-current="true"] .n{color:var(--ink)}
+.step[aria-current="true"] p{display:block}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.ctrl button{border:1px solid var(--line);background:none;border-radius:0;padding:10px 18px;font-size:13px;cursor:pointer;min-height:44px}
+.ctrl button:hover{border-color:var(--ink)}
+.ctrl button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.states{margin:0 0 14px}.states button{flex:1}.states button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:600}
+.rot{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--muted)}
+.rot input{flex:1;accent-color:var(--ink);min-height:32px}
+
+/* other options */
+.opts{display:grid;gap:0;border-top:1px solid var(--line)}
+.opt{border-bottom:1px solid var(--line);padding:36px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:40px;min-width:0}
+.opt h2{font-size:26px;margin:0 0 10px}
+.opt > div > p{color:var(--muted);margin:0}
+.opt .kv{display:grid;gap:14px;margin-top:20px}
+.opt .kv div{border-top:1px solid var(--line);padding-top:10px;font-size:14px}
+.opt .kv b{display:block;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.opt.full{grid-template-columns:minmax(0,1fr)}
+.pics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pics figure,.renders figure,.or4 figure{margin:0}
+.pics img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--stage);display:block}
+figcaption{font-size:12px;color:var(--muted);margin-top:8px}
+.opt .wide{margin:0}.opt .wide img{width:100%;display:block;background:var(--stage)}
+
+/* concept content */
+.hero2 .brandrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hero2 .logo{border:1px solid var(--line);font-family:var(--display);font-weight:500;font-size:13px;padding:3px 10px}
+.hero2 h1{margin:14px 0 8px}
+.hero2 .sub{font-family:var(--display);font-weight:400;font-size:clamp(19px,2.2vw,24px);color:var(--ink);margin:0 0 10px;letter-spacing:-.01em}
+.hero2 .note,.orhead .note{display:inline-block;margin-top:14px;font-size:12px;color:var(--faint)}
+.purpose{border-top:1px solid var(--line);padding:40px 0 0;margin:0 0 48px;display:grid;gap:22px}
+.purpose h2{font-size:clamp(24px,3vw,34px);line-height:1.1;margin:0;max-width:24ch}
+.purpose .lead{margin:0;font-size:16px;max-width:64ch;color:var(--muted)}
+.purpose .points{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.purpose .points div{padding-top:12px;border-top:1px solid var(--ink);display:flex;flex-direction:column;gap:6px;min-width:0}
+.purpose .points b{font-family:var(--display);font-weight:500;font-size:17px}
+.purpose .points span{color:var(--muted);font-size:14px}
+.purpose.bottom{margin:64px 0 0}
+.flap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:32px;align-items:center}
+.flap img{width:100%;display:block;background:var(--stage)}
+.flap h3{font-size:19px;margin:0 0 8px}
+.flap p{margin:0;color:var(--muted);font-size:14px}
+.walkh{font-size:clamp(24px,3vw,34px);margin:8px 0 24px}
+.walknote{color:var(--faint);font-size:12px;margin:16px 0 0;max-width:70ch}
+.renders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:40px}
+.renders img{width:100%;aspect-ratio:1.1;object-fit:cover;display:block;background:var(--stage)}
+.renders.four img{object-fit:contain;background:var(--white)}
+@media (min-width:861px){.renders.four{grid-template-columns:repeat(4,minmax(0,1fr))}.renders.four img{aspect-ratio:1}}
+.empty{border-top:1px solid var(--line);padding:40px 0 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:40px;align-items:center}
+.empty .big{aspect-ratio:1;background:var(--stage);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:300;font-size:120px;color:#b9b2a8}
+.empty h2{font-size:26px;margin:0 0 10px}
+.empty p{margin:0 0 12px;color:var(--muted)}
+.empty .pill{color:var(--faint)}
+.foot{margin-top:72px;color:var(--faint);font-size:12px;border-top:1px solid var(--line);padding-top:18px}
+
+/* Open Road */
+.orhero{margin:0 0 40px}
+.orhero img{width:100%;max-height:min(78vh,820px);object-fit:contain;display:block;background:var(--white)}
+.orhead{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 48px;align-items:end;padding-bottom:40px;border-bottom:1px solid var(--line);margin-bottom:48px}
+.orhead > *{grid-column:1}
+.orhead .why{grid-column:2}
+.orhead .eyebrow{grid-row:1}
+.orhead h1{font-size:clamp(38px,5.6vw,68px);line-height:1;letter-spacing:-.04em;margin:0}
+.orhead .sub{font-family:var(--display);font-weight:400;font-size:clamp(18px,2vw,22px);margin:0;letter-spacing:-.01em;max-width:36ch}
+.orhead .why{margin:0;color:var(--muted);font-size:15px;max-width:52ch;grid-row:1 / span 3;align-self:end}
+.orhead .row{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.cta{display:inline-flex;flex-direction:column;gap:2px;border-bottom:1px solid var(--ink);padding:0 0 4px;font-size:14px;font-weight:500}
+.cta small{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.orhead .walkh{margin-top:0}
+.lists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.lists h3{font-size:17px;margin:0 0 8px;padding-top:12px;border-top:1px solid var(--ink)}
+.lists ul{margin:0;padding-left:16px;color:var(--muted);font-size:14px}
+.lists li{margin:4px 0}
+.purpose .small{margin:0;color:var(--faint);font-size:12px}
+.or4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.or4.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.or4 img{width:100%;aspect-ratio:1;object-fit:contain;display:block;background:var(--white)}
+.widefig{margin:0}.widefig img{width:100%;display:block;background:var(--stage)}.widefig figcaption{font-size:12px;color:var(--muted);margin-top:8px}
+.stagebg img,.orhero.stagebg img{background:var(--stage)!important}
+.credit{font-size:12px;color:var(--faint);margin:28px 0 0;max-width:90ch}
+
+@media (max-width:860px){
+  .wrap.wide{padding:36px 16px 56px}
+  .player,.opt,.empty,.hero,.orhead,.flap{grid-template-columns:1fr}
+  .orhead .why{grid-column:1;grid-row:auto}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .purpose .points{grid-template-columns:1fr}
+  .wrap{padding:36px 16px 56px}.bar-in{padding:12px 16px}
+}
+@media (max-width:620px){.or4{grid-template-columns:repeat(2,minmax(0,1fr))}.or4.n3{grid-template-columns:1fr}.lists{grid-template-columns:1fr}}
+@media (max-width:520px){.grid{grid-template-columns:1fr;gap:40px}.renders{grid-template-columns:1fr}.who span{display:none}}
+@media (prefers-reduced-motion:reduce){.card .thumb img{transition:none}}
+</style>
+
+<header class="bar"><div class="bar-in">
+  <button class="who" id="home">Oliver Branson Hammond <span>· Packaging as an experience</span></button>
+  <nav class="nav" id="nav" aria-label="Concepts"></nav>
+</div></header>
+<main class="wrap" id="main"></main>
+
+<script>
+const SEQ = {q1:36,q2:41,q3:24,q4:30,a1:40,a2:46,a3:32,a4:48,a5:56,p1:36,p2:46,p3:30};
+const C = [
+ {id:1, tier:'lead', c:'#d6402c', name:'A Little Extra', partner:'Domino’s', client:'Domino’s', logoImg:'f/logo_dominos.png',
+  line:'Domino’s adds one free extra slice to the box, in its own triangular carton that rises into view as the lid opens. A partner brand pays to put its name on the carton, for example “adidas × Domino’s”.',
+  purposeBottom:true,
+  purpose:{title:'A free slice, paid for by a partner.',
+    copy:'Domino’s gives customers a little extra: one free slice in its own carton. The carton and the inside of its lid are sponsor space, so a partner brand reaches people at the moment the box opens, and the free slice gives customers a reason to order again.',
+    points:[['Customers get a little extra','One free slice in a large pizza box, kept separate and level in its own carton.'],
+            ['Partners buy the carton','The carton top and the inside of its lid carry joint branding such as “adidas × Domino’s”.'],
+            ['A next step for the partner','A QR code inside the carton lid can link to the partner’s campaign page. It’s a placeholder here, with no offer invented.']]},
+  thumb:'f/r_closed.jpg',
+  renders:[['f/r_closed.jpg','Closed: the red corner is the only clue'],['f/r_open.jpg','Open: the slice carton sits level on the lid']],
+  walk:[
+   {seq:'a1', loop:true, t:'Arrives closed', b:'A standard large Domino’s box. The red triangle in the back corner is the only clue: the free slice sits in its own carton, raised just above the crust so it can be a full size slice.'},
+   {seq:'a2', t:'Open the lid', b:'A folded card link under the lid turns a single arm. The carton rises out of the corner and swings over the hinge, staying level the whole way, never touching the pizza.'},
+   {seq:'a3', t:'Open the slice', b:'The carton lands level on the open lid. Flip its lid: a full 1/8 slice of the same pizza, and the inside of the lid carries the sponsor’s message and a QR placeholder.'},
+   {seq:'a4', t:'Remove the stand, tear off the lid', b:'After the meal, lift out the empty carton and its arm. Tear the lid off along the perforated hinge and press out the panel printed on its inside.'},
+   {seq:'a5', t:'Fold a box for leftovers', b:'Fold up the three walls, put the last three slices in, then fold the top over and tuck its flaps in. The result is a box shaped like a slice, 182 mm long and 55 mm deep, ready for the fridge.'}],
+  opts:[
+   {t:'Pull out tray', b:'A matchbox sleeve. Pull the red tab and the whole pizza slides out on its tray, with the free extra slice waiting in the front corner.',
+    pro:'No linkage or pins. Stacks flat like a normal box. Cheapest to produce.', con:'No pop up moment. Needs a stiffer tray and a sleeve instead of a hinged lid.',
+    walk:[
+     {seq:'p1', loop:true, t:'Sleeve and tab', b:'Printed sleeve, red pull tab on the front face.'},
+     {seq:'p2', t:'Pull', b:'The tray slides out about 290 mm. The tray and sleeve have 0.5 mm running clearance.'},
+     {seq:'p3', t:'Slice revealed', b:'The free slice carton sits in the front left corner, 4.6 mm clear of the crust.'}]},
+   {t:'Pop up, open pivot', b:'The same lift with the pivot left exposed. This is where the mechanism was first resolved.',
+    pro:'Proved the lift works through the full 180°: every part checked at 2° steps.', con:'The pivot stands about 22 mm proud of the lid, which looks unfinished. The hood in the lead version fixes this.',
+    pics:[['f/x_a1_closed.jpg','Closed: exposed pivot'],['f/x_a1_mid.jpg','Lid at 90°']]},
+   {t:'Side drawer', b:'Only the slice comes out: a red tab in the side wall slides a triangular tray out of the box without opening it.',
+    pro:'Five card parts. Box stays a normal box.', con:'Slot weakens the side wall and can let heat out. Easy to miss the tab.',
+    pics:[['f/x_b_closed.jpg','Closed: tab in the side wall'],['f/x_b_out.jpg','Slice pulled out']]}]},
+ {id:2, tier:'lead', c:'#e60000', name:'A Fresh Start', partner:'Vodafone',
+  line:'A proposed Vodafone student welcome kit that unfolds into three reusable room boxes, helping students settle in and discover their connectivity options.',
+  thumb:'f/v2_closed.jpg',
+  hero:{logo:'Vodafone', logoImg:'f/vodafone_logo.png', eyebrow:'VODAFONE · STUDENT MOVE IN CAMPAIGN', sub:'Move in. Unpack. Get connected.',
+    intro:'A proposed Vodafone sponsored welcome kit that helps students settle into their new space. One compact package opens into three detachable storage boxes for the bedroom, bathroom and desk.',
+    note:'Independent concept proposal for Vodafone.'},
+  purposeBottom:true,
+  purpose:{title:'A useful welcome. A reason to connect.',
+    copy:'Starting university means setting up a new room and finding your feet. A Fresh Start gives Vodafone a practical role in that moment: helping students organise their essentials while introducing its student connectivity offer.',
+    points:[['Reach students at move in','Proposed distribution through university welcome events and participating student accommodation providers.'],
+            ['Give them something worth keeping','Three reusable boxes help organise everyday essentials after unpacking.'],
+            ['Create a next step','An inside welcome panel introduces the proposed Vodafone offer through a campaign QR link.']]},
+  flap:{img:'f/v2_flap_render.jpg', t:'Campaign touchpoint: inside the bedroom lid', b:'“Your fresh start begins here. Explore student connectivity.” The QR code is a labelled placeholder for a future Vodafone campaign page. It sits on the flat lid panel, clear of folds and seams. No offer, price or coverage claim is made.'},
+  walkTitle:'One box. Three spaces.',
+  walkNote:'The animation illustrates the intended mechanism. It isn’t physical validation: strength, fold durability and carrying are untested.',
+  renders:[['f/v2_closed.jpg','1 · Closed: one red cube, about 304 × 307 × 300 mm'],['f/v2_half.jpg','2 · Half open: the side boxes swing out on the wrap'],
+           ['f/v2_open.jpg','3 · Fully open: three boxes in a row, labels facing forward'],['f/v2_lids.jpg','4 · Lids open, each box ready for its room']],
+  walk:[
+   {seq:'q1', loop:true, t:'Arrive with one compact kit.', b:'About 304 × 307 × 300 mm. A red outer wrap holds three room boxes: the bedroom box at the back, bathroom and desk side by side in front. A tongue on the right door tucks into a slit in the left door.'},
+   {seq:'q2', t:'Swing the side boxes open.', b:'Pull the tongue free. Each front box rides on a door of the wrap and turns 180° about a fold at the bedroom box’s front corner. The boxes stay upright on the floor the whole way and land beside the bedroom box, labels facing forward.'},
+   {seq:'q3', t:'Lift the lids and unpack.', b:'Each box has its own tuck lid, so students can unpack one room at a time. Inside the bedroom lid, a welcome panel points to the campaign page.'},
+   {seq:'q4', t:'Separate the boxes for your room.', b:'Lift the retaining tabs and slide each box forward out of the wrap. Each box keeps its room label and a small Vodafone mark. The wrap folds flat.'}],
+  opts:[
+   {t:'Hinge geometry', b:'I worked the layout out in plan with simple volumes before any detail. Each door turns 180° about a vertical crease at the bedroom box’s front corner.',
+    pro:'Boxes end up flush with the bedroom box front and never collide: smallest gap 1 mm between boxes while swinging. The right door opens first because it carries the tuck tongue.',
+    con:'Side boxes widened from 145 to 148 mm so the pair fills the 300 mm front with 2 mm between them. The closed package comes out 304 × 307 × 300 mm, inside the 320 mm target.',
+    wide:['f/v_diag_plan.jpg','Plan view: closed, swinging, open']},
+   {t:'Wrap construction', b:'One die cut strip of board, red printed outside and kraft inside, with no glue joins. Room boxes are standard tuck top cartons.',
+    pro:'Seven panels and one tongue, no magnets, metal or moving arms. Double scores at the two door hinges let them fold a full 180° flat. Retaining tabs are U-cut tongues that push through slots in the boxes.',
+    con:'Untested: hinge durability over repeated opening, the strength of the 300 mm tall wrap, and carrying it closed. No handle until its reinforcement is designed.',
+    wide:['f/v_diag_wrap.jpg','Wrap dieline: 1218 × 300 mm strip']},
+   {t:'Size up: a move in version', b:'The welcome kit stays the main campaign: small enough to hand out at welcome events and carry home. The same design scaled up 1.5× becomes a box students can actually move their things in, offered as an upgrade alongside it.',
+    pro:'Same wrap, same hinge layout and the same three room boxes, so it is one design in two sizes. At about 456 × 460 × 450 mm closed, each side box is 222 mm wide, so A4 folders fit upright in the desk box.',
+    con:'Needs a heavier board grade and a reinforced carry handle, and it is too big to hand out casually, so it would be ordered or collected. Not modelled or tested yet beyond scaling.',
+    wide:['f/v_diag_size.jpg','Welcome kit and move in size, front views to scale']},
+   {t:'Front corner hinges', b:'Hinging the doors at the package’s front corners was the first thing I tested.',
+    pro:'Simplest fold line to find on the closed box.', con:'Rejected: the side boxes land 120 mm in front of the bedroom box, giving an unstable U-shape with the labels out of line.',
+    wide:['f/v_diag_alt.jpg','Rejected front corner hinge vs chosen mid depth hinge']}]},
+ {id:3, tier:'lead', c:'#bb0a30', name:'Open Road', partner:'Audi', client:'Audi AG', logoImg:'f/audi_rings_dark.png', live:'openroad', liveScript:'openroad.js', liveMount:'mountOpenRoad',
+  heroAlt:'Open Road pizza box fully open: two side wings extend a mountain road panorama around the car on the centre panel',
+  line:'A pizza box that unfolds into a panoramic reveal for the Audi A6 Sportback e-tron.',
+  thumb:'f/or_h4.jpg', heroImg:'f/or_h4.jpg',
+  orHead:{eyebrow:'AUDI · A6 SPORTBACK E-TRON LAUNCH', sub:'A panoramic pizza box campaign for the Audi A6 Sportback e-tron.',
+    intro:'A pizza box that unfolds into a panoramic reveal for the Audi A6 Sportback e-tron.',
+    why:'Opening the packaging becomes part of the advertisement. Two folding panels expand the scene around the car, creating a reveal before the meal.',
+    link:'Explore the A6 Sportback e-tron', note:'Independent concept proposal for Audi.'},
+  walkTitle:'Lift. Unfold. Reveal.',
+  walkNote:'Drag the model or use the slider to look around it. The animation illustrates movement; it doesn’t prove structural strength or manufacturability.',
+  walk:[
+   {t:'Arrives closed', b:'A charcoal pizza box with a front tuck closure. The lid carries the Open Road cover artwork and a labelled QR placeholder. The panorama inside stays hidden.'},
+   {t:'Lift the lid', b:'Release the tuck and lift. Two folded card stays near the rear corners stop the lid at about 100°. The two wings are still folded inward, showing “Open Road” teaser artwork and hiding the car.'},
+   {t:'Unfold the wings', b:'Swing each wing outward by hand on its vertical crease. The wings belong to the lid, not the base, and nothing drives them automatically.'},
+   {t:'Full panoramic reveal', b:'The wings stop about 15° forward of the centre panel, wrapping the road around the car. One continuous image runs across all three panels, with the whole car inside the centre panel.'}],
+  fold:{title:'How it folds and goes together',
+    points:[['A normal base','Standard pizza box base with four intact walls: about 330 × 330 × 45 mm inside, modelled in 1.5 mm board. The side walls roll into the base, so the lid only needs a front tuck flap and the wings swing clear.'],
+            ['One extra insert','A single die cut, creased sheet, 634 × 310 mm and 0.6 mm thick. The 320 mm centre panel is glued inside the lid. The two 157 mm wings stay free and fold inward with a 6 mm gap between their edges.'],
+            ['Two lid stays','Folded card stays near the rear corners, clear of the pizza, limit opening to about 100°. A proposed detail that needs a physical test.']],
+    pics:[['f/or_h1.jpg','Closed'],['f/or_h2.jpg','Lid up, wings folded'],['f/or_h3.jpg','Wings part open'],['f/or_h4.jpg','Full reveal']]},
+  make:{title:'Manufacturing and next steps',
+    intent:'Start from a conventional pizza box and add one die cut, creased display insert. Only the centre panel is fixed, so the extra parts and assembly steps stay few.',
+    cost:['Additional printed board for the insert','Cutting and creasing the insert','Attaching the centre panel inside the lid','The two lid stays'],
+    checks:['Folded thickness of the insert stack under the closed lid','Lid stability at 100° with the wings open','Warping from steam of the insert and wings','Food clearance between the folded insert and the pizza','Board, inks and adhesive suitable for food packaging'],
+    next:'Next prototype: print the insert full size on 0.6 mm board, fit it to a stock pizza box, add card stays, and run a hot pizza delivery test.',
+    modelled:'In the 3D model: 31.5 mm between pizza and folded insert when closed, 9 mm tuck flap, no panel intersections in any stage.'},
+  credit:'Car photograph: AUDI AG, photo A244721 (audi.com media centre). The panorama, lid artwork and concept renders are adapted from it for this proposal and are not official Audi campaign artwork. Audi rings appear as shown in the supplied concept artwork. Packaging concept, 3D model and animation: Oliver Branson Hammond.'},
+ {id:4, tier:'lead', c:'#111111', name:'On Display', partner:'adidas', client:'adidas', logoImg:'f/adidas_logo_dark.png', logoH:50, live:'ondisplay', liveScript:'ondisplay.js', liveMount:'mountOnDisplay',
+  line:'A shoebox with a folding platform built in: unpack the trainers, lift the tab, lock two supports and the box becomes a display stand.',
+  thumb:'f/od_thumb.jpg', heroImg:'f/od_hero.jpg', heroAlt:'On Display shoebox in display mode: a pair of trainers on the tilted kraft platform, the box standing on its own lid',
+  orHead:{eyebrow:'ADIDAS · SNEAKER PACKAGING', intro:'Keep the box. Show the shoes.',
+    why:'Designed for sneaker enthusiasts who keep the packaging: the box becomes part of the display. A platform hinged inside the box lifts, locks at a shallow angle and holds the pair up like a shop plinth.',
+    note:'Independent concept proposal for adidas.'},
+  walkTitle:'Unbox. Lift. Lock. Display.',
+  walkNote:'Drag the model or use the slider to look around it, and untick Show trainers to see the supports. The animation shows the intended folds. It does not prove strength, and no physical prototype has been tested yet.',
+  walk:[
+   {t:'Closed shoebox', b:'A conventional black shoebox with a removable lid. Inside, a kraft platform sits flat at the top of the base, above the trainers, with its two supports folded flat underneath.'},
+   {t:'Lid off, trainers out', b:'Lift off the lid. The platform is hinged along the top front edge, so it swings right up out of the way to take the trainers out, then folds back down.'},
+   {t:'Lift the rear tab', b:'Pull the tab on the rear edge. The front edge stays fixed on its scored hinge while the rear edge rises.'},
+   {t:'Unfold and lock the supports', b:'Fold the two triangular supports down from under the platform and open their foot flanges. Lower the platform: the flanges land on the reinforced rim ledges and their tabs drop into slots, holding it at 12°.'},
+   {t:'Display your pair', b:'Set the box on its own lid as a plinth and stand the trainers side by side, toes against the front lip.'}],
+  fold:{title:'How it works', wide:['f/od_detail.jpg','Display mode with the trainers hidden and one long wall cut away to show the supports'],
+    lead:'One extra platform and two folding supports turn a normal shoebox into a stand. Everything stays attached, so nothing gets lost.',
+    points:[['Hinged platform','Two layers of corrugated board with folded hems along both long edges. It is fixed to the top front edge with a scored hinge, so only the rear edge rises. A 12 mm front lip stops the trainers sliding off.'],
+            ['Two folding supports','Hollow triangular wedges hinged under the platform, one beneath each trainer’s outer edge. They lie flat for packing and swing down by hand. No automatic pull tab linkage.'],
+            ['Load into the walls','Each support’s foot flange sits along a rim ledge made by folding the long side walls double. Lock tabs keep the supports in place, but the weight goes through the flange into the wall rather than the tab.']],
+    pics:[['f/od_packed.jpg','Packed: platform and supports lie flat above the trainers'],['f/od_fold.jpg','Supports swing down from under the platform'],['f/od_locked.jpg','Locked at 12° on the rim ledges'],['f/od_disp.jpg','On display, standing on its lid']]},
+  fit:{title:'Size and fit', lead:'All dimensions are provisional, sized around a representative UK 9 low top trainer (stylised in the model).',
+    lists:[['Starting dimensions',['Trainer: about 295 × 106 × 80 mm','Box inside: 330 × 236 × 145 mm, 3 mm board','Lid outside: 349 × 253 × 50 mm','Platform: 326 × 232 mm, two 3 mm layers, display angle 12°','Supports: 288 mm long, up to 65 mm tall at the rear']],
+           ['Checked in the 3D model',['Both trainers fit inside for shipping: 5 mm spare each side, 43 mm under the folded supports','Both fit side by side on display, 11 mm apart and 5 mm inside the platform edges','Folded platform and lip leave 4 mm under the lid','Supports clear the walls and ledges by at least 12 mm while folding','Loaded platform stays over the base: its rear edge sits 8 mm inside the rear wall']]]},
+  make:{title:'Next steps', intent:'This is a development model. The geometry fits on screen; whether it holds up in cardboard is the next question.',
+    lists:[['Physical checks next',['Load testing with a heavy pair of trainers','Sagging over time of the platform and supports','Repeated folding of the hinge, supports and lock tabs','Manufacturing cost of the extra platform, supports and double walls']],
+           ['Other brands',['The structure isn’t tied to one brand: only the print changes, so the same box could carry any trainer brand’s artwork.','Box size would be adjusted per shoe category (for example kids, high tops, running).']]]},
+  credit:'Concept, 3D model and animation: Oliver Branson Hammond. adidas logo as supplied in the visual reference. Not affiliated with or endorsed by adidas.'},
+ {id:5, tier:'lead', c:'#0058a3', name:'Unpack Your Desk', partner:'IKEA', client:'IKEA', logoImg:'f/ikea_logo.png', heroStage:true, live:'unpack', liveScript:'unpack.js', liveMount:'mountUnpack',
+  line:'A student stationery starter kit whose shallow kraft box becomes a desk organiser, with a pen cup that folds up out of the tray.',
+  thumb:'f/up_thumb.jpg', heroImg:'f/up_hero.jpg', heroAlt:'Unpack Your Desk kit set up as a desk organiser: kraft tray with stationery channels and an upright pen cup holding pens and pencils',
+  orHead:{eyebrow:'IKEA · STUDENT WELCOME GIVEAWAY', intro:'Your starter kit. Your desk organiser.',
+    why:'Handed out as students move into halls and furnish their rooms: two pens, two pencils, a sharpener and a rubber. The box stays on the desk as the organiser, so IKEA stays in view all year. A QR code inside the lid links to student workspace products.',
+    note:'Independent concept proposal for IKEA. Not an existing IKEA partnership.'},
+  walkTitle:'Open. Lift. Organise.',
+  walkNote:'Jump between Packed, Deploying and Ready, or step through. Drag the model or use the slider to look around it. The animation shows the intended folds; a physical prototype is still needed to test them in board.',
+  walk:[
+   {t:'Open the lid', b:'A shallow kraft box. Inside: fitted channels for the pens and pencils, two recesses for the sharpener and rubber, and a QR code in the lid.'},
+   {t:'Take out the pens and pencils', b:'Clear the channels first. The pen holder lies folded flat on the back deck, out of the way.'},
+   {t:'Pull the yellow tab', b:'The holder swings up on its back hinge, then the creased corners open the flat tube into a square cup.'},
+   {t:'Lock the cup', b:'Fold the tongue on the front wall down into the slot in the deck. It holds the cup square.'},
+   {t:'Ready for your desk', b:'Pens and pencils go in the cup. The rubber and sharpener stay in their recesses, and the empty channels hold clips, cables or notes.'}],
+  fold:{title:'How it works', wide:['f/up_fold.jpg','Section and plan, to scale: the folded holder lifts on its hinge, then opens and locks'],
+    lead:'The pen cup is the only moving part. It folds flat into the tray and needs one lift and one lock to set up.',
+    points:[['Folds flat','A four sided tube, glued at the factory, lies flattened on the back deck: two layers, 110 × 78 mm, under the lid with 14 mm to spare.'],
+            ['Lifts and opens','Only the back wall is attached, by a scored hinge. Pull the yellow tab and the holder swings upright, then squares up into a 55 × 55 × 78 mm cup.'],
+            ['Locks','A tongue on the front wall folds down into a slot in the deck. A simple manual lock, with no glue needed by the student.']],
+    pics:[['f/up_v1.jpg','1 Open your starter kit'],['f/up_v2.jpg','2 Lift and lock the holder'],['f/up_v3.jpg','3 Ready for your desk']],
+    wide2:['f/up_detail.jpg','Close up of the fold and lock: the tongue swinging down towards its slot']},
+  fit:{title:'Size and fit', lead:'Starting dimensions, checked in the 3D model.',
+    lists:[['Starting dimensions',['Tray inside: 250 × 160 × 24 mm, 1.5 mm board','Lid outside: 258 × 168 × 26 mm','Channels: 14 mm wide × 189 mm long','Recesses: 52 × 29 mm for the sharpener and rubber','Pen cup: 55 × 55 × 78 mm']],
+           ['Checked in the 3D model',['Folded holder clears the last channel divider by 1.5 mm','14 mm between the folded holder and the inside of the lid','The cup swings and opens only over the back deck','Pens (140 mm) and pencils (175 mm) fit their channels']]]},
+  make:{title:'Manufacturing', intent:'Kept simple so it can be made cheaply at volume.',
+    lists:[['Construction',['Two die cut, creased kraft parts: the tray and lid, plus a preassembled insert','Glue only on the holder seam and a few insert tabs','Natural board, IKEA blue print and one yellow tab','The student only lifts and locks the cup']],
+           ['Prototype next',['Folding the holder up and down repeatedly','Whether the cup stays square and stable when full','How the hinge and tongue wear over a term of use']]]},
+  credit:'Concept, 3D model and animation: Oliver Branson Hammond. IKEA logo from the supplied visual reference. The QR code is a placeholder. Independent concept, not affiliated with or endorsed by IKEA.'}
+];
+
+/* ---------- frame player ---------- */
+const cache = {};
+function frameSrc(seq,i){ return `f/${seq}_${String(i).padStart(3,'0')}.jpg`; }
+function preload(seq){ if(cache[seq]) return cache[seq];
+  const n=SEQ[seq], imgs=[]; let done=0;
+  const p = new Promise(res=>{ for(let i=0;i<n;i++){ const im=new Image(); im.onload=im.onerror=()=>{ if(++done===n) res(imgs); }; im.src=frameSrc(seq,i); imgs.push(im);} });
+  cache[seq]={imgs,ready:p}; return cache[seq]; }
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let activeRaf = 0;
+function mountPlayer(el, steps, color){
+  el.innerHTML = `<div class="player">
+    <div class="stage"><canvas width="960" height="960" aria-label="Animated render"></canvas><span class="count"></span><span class="load"></span></div>
+    <div class="talk"><div class="steps">${steps.map((s,i)=>`<button class="step" data-i="${i}"><span class="n">${String(i+1).padStart(2,'0')}</span><span><h3>${s.t}</h3><p>${s.b}</p></span></button>`).join('')}</div>
+    <div class="ctrl"><button data-a="prev">← Back</button><button class="primary" data-a="next">Next step →</button><button data-a="replay">Replay</button></div></div></div>`;
+  const cv = el.querySelector('canvas'), g = cv.getContext('2d'), count = el.querySelector('.count'), load = el.querySelector('.load');
+  let cur = 0, f = 0, dir = 1, last = 0, imgs = null;
+  steps.forEach(s=>preload(s.seq));
+  function draw(){ if(imgs && imgs[f] && imgs[f].complete) g.drawImage(imgs[f],0,0,cv.width,cv.height); }
+  function go(i){ cur = Math.max(0, Math.min(steps.length-1, i)); f = 0; dir = 1; imgs = null;
+    el.querySelectorAll('.step').forEach((b,j)=>b.setAttribute('aria-current', j===cur));
+    count.textContent = `Step ${cur+1} of ${steps.length}`;
+    const c = cache[steps[cur].seq]; load.textContent = 'Loading…';
+    c.ready.then(a=>{ if(steps[cur].seq!==undefined && cache[steps[cur].seq]===c){ imgs=a; load.textContent=''; if(reduce){ f=a.length-1; } draw(); } });
+    el.querySelector('[data-a="next"]').textContent = cur===steps.length-1 ? 'Back to start' : 'Next step →';
+  }
+  el.querySelectorAll('.step').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+  el.querySelector('[data-a="prev"]').onclick=()=>go(cur-1);
+  el.querySelector('[data-a="next"]').onclick=()=>go(cur===steps.length-1?0:cur+1);
+  el.querySelector('[data-a="replay"]').onclick=()=>go(cur);
+  function tick(t){
+    if(!el.isConnected) return;
+    if(imgs && !reduce && t-last > 42){ last=t; const n=imgs.length, s=steps[cur];
+      if(s.loop){ f+=dir; if(f>=n-1||f<=0) dir=-dir; } else if(f<n-1) f++;
+      draw(); }
+    requestAnimationFrame(tick);
+  }
+  go(0); requestAnimationFrame(tick);
+  el.tabIndex = -1;
+  return {go:(i)=>go(i), next:()=>go(cur===steps.length-1?0:cur+1), prev:()=>go(cur-1)};
+}
+
+/* ---------- live 3D concepts (3: Open Road, 4: On Display) ---------- */
+let threeP=null; const liveP={};
+function loadJS(src){ return new Promise((res,rej)=>{ const sc=document.createElement('script'); sc.src=src; sc.onload=res; sc.onerror=rej; document.head.append(sc); }); }
+function loadThree(){ return threeP || (threeP = loadJS('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js')
+  .then(()=>loadJS('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js').catch(()=>{}))); }
+function loadLive(script){ return loadThree().then(()=> liveP[script] || (liveP[script] = loadJS(script))); }
+const fig = (p, lazy=true) => `<figure><img src="${p[0]}" alt="${p[1]}"${lazy?' loading="lazy"':''}><figcaption>${p[1]}</figcaption></figure>`;
+function liveConcept(c, body){
+  const h=c.orHead, mk=c.make;
+  const lists = mk.lists || [['Cost drivers', mk.cost], ['Physical checks still needed', mk.checks]];
+  body.innerHTML = `<figure class="orhero${c.heroStage?' stagebg':''}"><img src="${c.heroImg}" alt="${c.heroAlt}"></figure>
+   <div class="orhead"><span class="eyebrow">${h.eyebrow}</span><h1>${c.name}</h1><p class="sub">${h.intro}</p><p class="why">${h.why}</p>
+   <div class="row">${h.link?`<span class="cta">${h.link} →<small>Proposed campaign link</small></span>`:''}<span class="note">${h.note}</span></div></div>
+   <h2 class="walkh">${c.walkTitle}</h2><div id="live"></div><p class="walknote">${c.walkNote}</p>
+   <section class="purpose" style="margin-top:56px"><h2>${c.fold.title}</h2>
+     ${c.fold.wide?`<figure class="widefig">${`<img src="${c.fold.wide[0]}" alt="${c.fold.wide[1]}" loading="lazy"><figcaption>${c.fold.wide[1]}</figcaption>`}</figure>`:''}
+     ${c.fold.lead?`<p class="lead">${c.fold.lead}</p>`:''}
+     <div class="points">${c.fold.points.map(p=>`<div><b>${p[0]}</b><span>${p[1]}</span></div>`).join('')}</div>
+     <div class="or4${c.fold.pics.length===3?' n3':''}${c.fold.stagePics?' stagebg':''}">${c.fold.pics.map(p=>fig(p)).join('')}</div>
+     ${c.fold.wide2?`<figure class="widefig" style="margin-top:32px"><img src="${c.fold.wide2[0]}" alt="${c.fold.wide2[1]}" loading="lazy"><figcaption>${c.fold.wide2[1]}</figcaption></figure>`:''}</section>
+   ${c.fit?`<section class="purpose"><h2>${c.fit.title}</h2><p class="lead">${c.fit.lead}</p>
+     <div class="lists">${c.fit.lists.map(([t,items])=>`<div><h3>${t}</h3><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('')}</div></section>`:''}
+   <section class="purpose"><h2>${mk.title}</h2><p class="lead">${mk.intent}</p>
+     <div class="lists">${lists.map(([t,items])=>`<div><h3>${t}</h3><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('')}</div>
+     ${mk.modelled?`<p class="small">${mk.modelled}</p>`:''}${mk.next?`<p class="lead" style="font-size:16px">${mk.next}</p>`:''}</section>
+   <p class="credit">${c.credit}</p>`;
+  const live = body.querySelector('#live');
+  live.innerHTML = '<div class="stage" style="max-width:640px"><span class="load">Loading 3D model…</span></div>';
+  const fallback = ()=>{ player = null; live.innerHTML = `<div class="or4">${c.fold.pics.map((p,i)=>`<figure><img src="${p[0]}" alt="${p[1]}"><figcaption>${p[1]}</figcaption></figure>`).join('')}</div>`; };
+  loadLive(c.liveScript).then(()=>{ if(!live.isConnected) return;
+    try { player = window[c.liveMount](live, c.walk, {orbit: !matchMedia('(pointer:coarse)').matches}); } catch(e){ console.error(e); fallback(); } }).catch(fallback);
+}
+
+/* ---------- views ---------- */
+const main = document.getElementById('main'), nav = document.getElementById('nav');
+let player = null;
+function renderNav(active){
+  nav.innerHTML = `<button data-k="home" aria-current="${active==='home'}">Overview</button>` + C.map(c=>`<button data-k="${c.id}" aria-current="${active===c.id}"><i>${String(c.id).padStart(2,'0')}</i>${c.name}</button>`).join('');
+  nav.querySelectorAll('button').forEach(b=>b.onclick=()=>route(b.dataset.k==='home'?'home':+b.dataset.k));
+  const act=nav.querySelector('[aria-current="true"]'); if(act) nav.scrollLeft=Math.max(0,act.offsetLeft-nav.clientWidth/2+act.offsetWidth/2);
+}
+function cardHTML(c){
+  return `<button class="card${c.tier==='lead'?'':' idea'}" data-id="${c.id}">
+    <div class="thumb">${c.thumb?`<img src="${c.thumb}" alt="">`:`<span class="ph">${String(c.id).padStart(2,'0')}</span>`}</div>
+    <span class="tier"><span>${String(c.id).padStart(2,'0')}</span><span>${c.partner}</span>${c.tier==='lead'?'':'<span style="margin-left:auto">Early idea</span>'}</span>
+    <h2>${c.name}</h2><p>${c.line}</p></button>`;
+}
+const pad=n=>String(n).padStart(2,'0'); const rng=a=>a.length>1?`${pad(a[0].id)}–${pad(a[a.length-1].id)}`:pad(a[0].id);
+function home(){
+  player=null; main.classList.add('wide');
+  main.innerHTML = `<section class="hero"><div><span class="label">Packaging design · 2026</span><h1>Making packaging an experience</h1></div>
+    <p>Five packaging concepts where opening the box is the experience: it reveals, unfolds and stays useful long after it’s opened. Each opens on a walkthrough; <b>Other options</b> shows the alternative routes I explored.</p></section>
+    <div class="grid">${C.map(cardHTML).join('')}</div>
+    <p class="foot">Student concepts by Oliver Branson Hammond, BSc Product Design, UWE Bristol · Oliverbh.design@gmail.com · Brand names identify the intended partner. These concepts aren’t affiliated with or endorsed by those brands.</p>`;
+  main.querySelectorAll('.card').forEach(b=>b.onclick=()=>route(+b.dataset.id));
+}
+function concept(c, tab){
+  main.classList.remove('wide');
+  const hasOpts = c.opts && c.opts.length;
+  main.style.setProperty('--c', c.c);
+  const head = c.live ? (c.logoImg ? `<img class="clogo"${c.logoH?` style="height:${c.logoH}px"`:''} src="${c.logoImg}" alt="${c.partner} logo">` : `<span class="pill">${String(c.id).padStart(2,'0')} · ${c.partner} · Developed concept</span>`) : c.hero ? `<div class="hero2"><div class="brandrow">${c.hero.logoImg?`<img class="clogo" style="height:30px;margin:0" src="${c.hero.logoImg}" alt="${c.hero.logo} logo">`:`<span class="logo" aria-label="${c.hero.logo} (logo asset to be supplied)">${c.hero.logo}</span>`}<span class="eyebrow">${c.hero.eyebrow}</span></div>
+    <h1>${c.name}</h1><p class="sub">${c.hero.sub}</p><p>${c.hero.intro}</p><span class="note">${c.hero.note}</span></div>`
+    : `<div>${c.logoImg?`<img class="clogo" src="${c.logoImg}" alt="${c.partner} logo">`:`<span class="pill">${String(c.id).padStart(2,'0')} · ${c.partner}</span>`}<h1>${c.name}</h1><p>${c.line}</p></div>`;
+  main.innerHTML = `<div class="chead" style="--c:${c.c}">${head}
+    ${c.walk&&hasOpts?`<div class="tabs" role="tablist"><button role="tab" data-t="walk" aria-selected="${tab!=='opts'}">Walkthrough</button>${hasOpts?`<button role="tab" data-t="opts" aria-selected="${tab==='opts'}">Other options (${c.opts.length})</button>`:''}</div>`:''}</div>
+    <div id="body" style="--c:${c.c}"></div>
+    <p class="foot">Student concept by Oliver Branson Hammond · not affiliated with or endorsed by ${c.client||c.partner}.</p>`;
+  main.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>concept(c,b.dataset.t));
+  const body = main.querySelector('#body');
+  if(c.live){ liveConcept(c, body); return; }
+  if(!c.walk){
+    body.innerHTML = `<div class="empty"><div class="big">${String(c.id).padStart(2,'0')}</div><div>
+      <h2>${c.tier==='lead'?'Walkthrough coming next':'Concept stage'}</h2>
+      <p>${c.line}</p>
+      <p>${c.tier==='lead'?'This concept gets the full treatment: an animated walkthrough and the alternative routes explored.':'An early idea to talk through. It will get a single concept render, without detailed development.'}</p>
+      <span class="pill">In progress</span></div></div>`;
+    player=null; return;
+  }
+  if(tab==='opts'){
+    body.innerHTML = `<div class="opts">${c.opts.map((o,i)=>`<article class="opt ${o.walk||o.wide?'full':''}">
+      <div><h2>${o.t}</h2><p>${o.b}</p>
+      <div class="kv"><div><b>Works because</b>${o.pro}</div><div><b>Trade-off</b>${o.con}</div></div></div>
+      ${o.walk?`<div class="optplayer" data-i="${i}"></div>`:o.wide?`<figure class="wide"><img src="${o.wide[0]}" alt="${o.wide[1]}" loading="lazy"><figcaption>${o.wide[1]}</figcaption></figure>`:`<div class="pics">${o.pics.map(p=>`<figure><img src="${p[0]}" alt="${p[1]}" loading="lazy"><figcaption>${p[1]}</figcaption></figure>`).join('')}</div>`}
+    </article>`).join('')}</div>`;
+    body.querySelectorAll('.optplayer').forEach(d=>{ player = mountPlayer(d, c.opts[+d.dataset.i].walk, c.c); });
+  } else {
+    if(c.purpose){ const pu=document.createElement('section'); pu.className='purpose';
+      pu.innerHTML=`<h2>${c.purpose.title}</h2><p class="lead">${c.purpose.copy}</p><div class="points">${c.purpose.points.map(p=>`<div><b>${p[0]}</b><span>${p[1]}</span></div>`).join('')}</div>`+
+        (c.flap?`<div class="flap"><img src="${c.flap.img}" alt="Proposed welcome panel inside the bedroom box lid with a QR placeholder"><div><h3>${c.flap.t}</h3><p>${c.flap.b}</p></div></div>`:'');
+      if(c.purposeBottom) pu.classList.add('bottom'); body.append(pu); }
+    if(c.walkTitle){ const h=document.createElement('h2'); h.className='walkh'; h.textContent=c.walkTitle; body.append(h); }
+    if(c.renders){ const r=document.createElement('div'); r.className='renders'+(c.renders.length>2?' four':''); r.innerHTML=c.renders.map(p=>`<figure><img src="${p[0]}" alt="${p[1]}"><figcaption>${p[1]}</figcaption></figure>`).join(''); const pw=document.createElement('div'); body.append(r,pw); player = mountPlayer(pw, c.walk, c.c);
+      if(c.walkNote){ const n=document.createElement('p'); n.className='walknote'; n.textContent=c.walkNote; body.append(n); }
+      const pb=body.querySelector('.purpose.bottom'); if(pb) body.append(pb); }
+    else player = mountPlayer(body, c.walk, c.c);
+  }
+}
+function setHash(h){ try { history.replaceState(null,'',h); } catch(e){} }
+function route(k){
+  renderNav(k);
+  if(k==='home'){ home(); setHash('#overview'); }
+  else { concept(C.find(c=>c.id===k),'walk'); setHash('#c'+k); }
+  try { scrollTo({top:0}); } catch(e){}
+}
+document.getElementById('home').onclick=()=>route('home');
+addEventListener('keydown',e=>{ if(!player || e.target.closest('input,textarea')) return;
+  if(e.key==='ArrowRight'){ player.next(); e.preventDefault(); } if(e.key==='ArrowLeft'){ player.prev(); e.preventDefault(); } });
+let h=null; try { h = (location.hash||'').match(/^#c([1-5])$/); } catch(e){}
+route(h? +h[1] : 'home');
+</script>
+
+
+</body></html>
